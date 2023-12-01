@@ -130,27 +130,44 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
             const result = {};
 
             for (const { learner_id, assignment_id, submission } of learnerSubmissions) {
-                const { score, submitted_at } = submission;
+                const { score, submitted_at } = submission
                 const { points_possible, due_at } = getAssignmentInfo(assignment_id, assignmentGroup);
 
                 setDefault(result, learner_id, { id: parseInt(learner_id) });
 
                 if (Date.now() > Date.parse(due_at) && parseInt(points_possible)) {
-                    result[learner_id][assignment_id] = parseInt(score) / parseInt(points_possible);
+                    result[learner_id][assignment_id] = {
+                        score: parseInt(score),
+                        points_possible: parseInt(points_possible)
+                    }
                 }
 
                 if (Date.parse(submitted_at) > Date.parse(due_at)) {
-                    result[learner_id][assignment_id] = (parseInt(score) - (.1 * parseInt(points_possible))) / parseInt(points_possible);
+                    result[learner_id][assignment_id].late = true;
                 }
             }
 
             for (const learner in result) {
                 const { id, ...assignments } = result[learner];
+                let totalPointsEarned = 0;
+                let totalPossiblePoints = 0;
+                setDefault(result[learner], 'avg', 0);
 
                 for (const assignment in assignments) {
-                    setDefault(result[learner], 'avg', 0);
-                    result[learner]['avg'] += result[learner][assignment] / Object.keys(assignments).length;
+                    let assignmentData = result[learner][assignment];
+
+                    if (assignmentData.late) {
+                       assignmentData.score = assignmentData.score - (.1 * assignmentData.points_possible)
+                    } 
+
+                    totalPointsEarned += assignmentData.score;
+                    totalPossiblePoints += assignmentData.points_possible;
+
+                    delete result[learner][assignment];
+                    result[learner][assignment] = assignmentData.score / assignmentData.points_possible; 
                 }
+
+                result[learner].avg = totalPointsEarned / totalPossiblePoints;
             }
 
             return Object.values(result);
