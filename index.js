@@ -116,10 +116,9 @@ function setDefault(obj, key, value) {
     }
 };
 
-const getAssignmentInfo = (id, assignmentGroup) => {
-    for (const assignment of assignmentGroup.assignments) {
-        if (assignment['id'] === id) {
-            const { points_possible, due_at } = assignment; 
+const getAssignmentInfo = (assignmentId, assignmentGroup) => {
+    for (const { id, points_possible, due_at } of assignmentGroup.assignments) {
+        if ( id === assignmentId) {
             return { points_possible, due_at };
         };
     };
@@ -130,7 +129,6 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
         if (courseInfo.id == assignmentGroup.course_id) {
             const result = {};
 
-            // Add assignments to respective learner
             for (const { learner_id, assignment_id, submission } of learnerSubmissions) {
                 const { score } = submission;
                 const { points_possible, due_at } = getAssignmentInfo(assignment_id, assignmentGroup);
@@ -138,7 +136,7 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
                 setDefault(result, learner_id, { id: learner_id });
 
                 if (Date.now() > Date.parse(due_at)) {
-                        result[learner_id][assignment_id] = score / points_possible;
+                    result[learner_id][assignment_id] = score / points_possible;
                 };
             };
 
@@ -151,7 +149,7 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
                 }
             }
 
-            return result;
+            return Object.values(result);
         } else {
             throw new Error('Error - Assignment group does not belong to this course');
         }
