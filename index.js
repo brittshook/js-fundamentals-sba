@@ -116,7 +116,7 @@ function setDefault(obj, key, value) {
     }
 }
 
-const getAssignmentInfo = (assignmentId, assignmentGroup) => {
+function getAssignmentInfo(assignmentId, assignmentGroup) {
     for (const { id, points_possible, due_at } of assignmentGroup.assignments) {
         if ( id === assignmentId) {
             return { points_possible, due_at };
