@@ -114,15 +114,15 @@ function setDefault(obj, key, value) {
     if (!obj[key]) {
         obj[key] = value;
     }
-};
+}
 
 const getAssignmentInfo = (assignmentId, assignmentGroup) => {
     for (const { id, points_possible, due_at } of assignmentGroup.assignments) {
         if ( id === assignmentId) {
             return { points_possible, due_at };
-        };
-    };
-};
+        }
+    }
+}
 
 function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
     try {
@@ -130,15 +130,19 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
             const result = {};
 
             for (const { learner_id, assignment_id, submission } of learnerSubmissions) {
-                const { score } = submission;
+                const { score, submitted_at } = submission;
                 const { points_possible, due_at } = getAssignmentInfo(assignment_id, assignmentGroup);
 
                 setDefault(result, learner_id, { id: learner_id });
 
                 if (Date.now() > Date.parse(due_at)) {
                     result[learner_id][assignment_id] = score / points_possible;
-                };
-            };
+                }
+
+                if (Date.parse(submitted_at) > Date.parse(due_at)) {
+                    result[learner_id][assignment_id] = (score - (.1 * points_possible)) / points_possible;
+                }
+            }
 
             for (const learner in result) {
                 const { id, ...assignments } = result[learner];
