@@ -133,7 +133,7 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
                 const { score, submitted_at } = submission;
                 const { points_possible, due_at } = getAssignmentInfo(assignment_id, assignmentGroup);
 
-                setDefault(result, learner_id, { id: learner_id });
+                setDefault(result, learner_id, { id: parseInt(learner_id) });
 
                 if (Date.now() > Date.parse(due_at)) {
                     result[learner_id][assignment_id] = parseInt(score) / parseInt(points_possible);
