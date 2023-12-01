@@ -135,15 +135,23 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
 
                 setDefault(result, learner_id, { id: parseInt(learner_id) });
 
-                if (Date.now() > Date.parse(due_at) && parseInt(points_possible)) {
-                    result[learner_id][assignment_id] = {
-                        score: parseInt(score),
-                        points_possible: parseInt(points_possible)
+                try {
+                    if (due_at) {
+                        if (Date.now() > Date.parse(due_at) && parseInt(points_possible)) {
+                            result[learner_id][assignment_id] = {
+                                score: parseInt(score),
+                                points_possible: parseInt(points_possible)
+                            }
+                        }
+        
+                        if (Date.parse(submitted_at) > Date.parse(due_at)) {
+                            result[learner_id][assignment_id].late = true;
+                        }
+                    } else {
+                        throw new Error(`Error - Assignment ${assignment_id} is missing due date`);
                     }
-                }
-
-                if (Date.parse(submitted_at) > Date.parse(due_at)) {
-                    result[learner_id][assignment_id].late = true;
+                } catch(err) {
+                    console.log(err);
                 }
             }
 
@@ -157,13 +165,12 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
                     let assignmentData = result[learner][assignment];
 
                     if (assignmentData.late) {
-                       assignmentData.score = assignmentData.score - (.1 * assignmentData.points_possible)
+                       assignmentData.score -= .1 * assignmentData.points_possible;
                     } 
 
                     totalPointsEarned += assignmentData.score;
                     totalPossiblePoints += assignmentData.points_possible;
 
-                    delete result[learner][assignment];
                     result[learner][assignment] = assignmentData.score / assignmentData.points_possible; 
                 }
 
