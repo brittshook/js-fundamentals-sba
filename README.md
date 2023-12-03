@@ -35,7 +35,7 @@ try {
 }
 ```
 
-Other potential errors are also mitigated. In the case of type errors, I'm utilizing parseInt to convert strings to numbers in cases where numbers are expected.
+Other potential errors are also mitigated. In the case of type errors, I utilize parseInt to convert strings to numbers in cases where numbers are expected.
 ```javascript
 if (Date.now() > Date.parse(due_at) && parseInt(points_possible)) {
     result[learner_id][assignment_id] = {
@@ -45,7 +45,7 @@ if (Date.now() > Date.parse(due_at) && parseInt(points_possible)) {
 }
 ```
 
-In the above example, the if statement is first checking that the due date has passed (and can now be graded), and that the points possible on the assignment is non-zero. Assigments with 0 possible points shoud not be graded to avoid weighted averages exceeding 100% and issues with dividing by 0.
+In the above example, the if statement is first checking that the due date has passed (and can now be graded), and that the points possible on the assignment is non-zero. Assignments with 0 possible points should not be graded to avoid weighted averages exceeding 100% and issues with dividing by 0.
 
 ### General approach
 To keep my code efficient and readable, I often utilized destructuring assignment. 
@@ -53,11 +53,9 @@ To keep my code efficient and readable, I often utilized destructuring assignmen
 for (const { learner_id, assignment_id, submission } of learnerSubmissions) {
     const { score, submitted_at } = submission
     const { points_possible, due_at } = getAssignmentInfo(assignment_id, assignmentGroup);
-
-    setDefault(result, learner_id, { id: parseInt(learner_id) });
 ```
 
-While I needed to output an array of objects from getLearnerData, I went the route of creating a object of objects and converting it to an array at the end. This approch made the process of accessing relevant properties and creating new properties simpler.
+While I needed to output an array of objects from getLearnerData, I went the route of creating a object of objects and converting it to an array at the end. This approach made the process of accessing relevant properties and creating new properties simpler.
 ```javascript
 const result = {};
 ...
