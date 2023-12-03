@@ -98,7 +98,7 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
             const result = {};
 
             for (const { learner_id, assignment_id, submission } of learnerSubmissions) {
-                const { score, submitted_at } = submission
+                const { score, submitted_at } = submission;
                 const { points_possible, due_at } = getAssignmentInfo(assignment_id, assignmentGroup);
 
                 setDefault(result, learner_id, { id: parseInt(learner_id) });

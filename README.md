@@ -51,7 +51,7 @@ In the above example, the if statement is first checking that the due date has p
 To keep my code efficient and readable, I often utilized destructuring assignment. 
 ```javascript
 for (const { learner_id, assignment_id, submission } of learnerSubmissions) {
-    const { score, submitted_at } = submission
+    const { score, submitted_at } = submission;
     const { points_possible, due_at } = getAssignmentInfo(assignment_id, assignmentGroup);
 ```
 
